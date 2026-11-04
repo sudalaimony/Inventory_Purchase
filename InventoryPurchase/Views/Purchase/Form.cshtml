@@ -1,0 +1,111 @@
+@model PurchaseHeader
+@{
+    ViewData["Title"] = "Purchase";
+    var products = (List<Product>)ViewBag.Products;
+
+    var lines = Model.Details.ToList();
+    if (lines.Count == 0)
+    {
+        lines.Add(new PurchaseDetail());
+    }
+}
+
+<h4>@(Model.PurchaseId == 0 ? "New Purchase" : "Edit Purchase #" + Model.PurchaseId)</h4>
+
+<form asp-action="Save" method="post" id="purchaseForm">
+    <input type="hidden" asp-for="PurchaseId" />
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="SupplierId" class="form-label"></label>
+            <select asp-for="SupplierId" asp-items="ViewBag.Suppliers" class="form-select">
+                <option value="">-- Select Supplier --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="InvoiceNo" class="form-label"></label>
+            <input asp-for="InvoiceNo" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="InvoiceDate" class="form-label"></label>
+            <input asp-for="InvoiceDate" type="date" class="form-control" />
+        </div>
+    </div>
+
+    <table class="table table-bordered table-sm" id="lines">
+        <thead class="table-light">
+            <tr>
+                <th style="width:22%">Product</th>
+                <th>Lot No</th>
+                <th>Expiry Date</th>
+                <th style="width:8%">Qty</th>
+                <th style="width:9%">Rate</th>
+                <th style="width:7%">Disc %</th>
+                <th class="amount">Amount</th>
+                <th class="amount">Tax</th>
+                <th class="amount">Net</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var line in lines)
+            {
+                <tr class="line">
+                    <td>
+                        <select data-field="ProductId" class="form-select form-select-sm product" onchange="productChanged(this)">
+                            <option value="0">-- Select --</option>
+                            @foreach (var p in products)
+                            {
+                                <option value="@p.ProductId"
+                                        selected="@(p.ProductId == line.ProductId)"
+                                        data-cost="@p.CostPrice"
+                                        data-expiry="@(p.HasExpiry ? "1" : "0")"
+                                        data-taxtype="@(p.TaxType ?? "")"
+                                        data-taxrate="@(p.TaxRate)"
+                                        data-addrate="@(p.AdditionalRate)">
+                                    @p.ProductCode - @p.ProductName
+                                </option>
+                            }
+                        </select>
+                    </td>
+                    <td><input data-field="LotNo" class="form-control form-control-sm" value="@line.LotNo" /></td>
+                    <td><input data-field="ExpiryDate" type="date" class="form-control form-control-sm expiry" value="@(line.ExpiryDate?.ToString("yyyy-MM-dd"))" /></td>
+                    <td><input data-field="Quantity" class="form-control form-control-sm num" value="@(line.Quantity == 0 ? "" : line.Quantity.ToString("0.##"))" oninput="calculate()" /></td>
+                    <td><input data-field="Rate" class="form-control form-control-sm num" value="@(line.Rate == 0 ? "" : line.Rate.ToString("0.00"))" oninput="calculate()" /></td>
+                    <td><input data-field="DiscountPercent" class="form-control form-control-sm num" value="@line.DiscountPercent.ToString("0.##")" oninput="calculate()" /></td>
+                    <td class="amount gross">0.00</td>
+                    <td class="amount tax">0.00</td>
+                    <td class="amount net">0.00</td>
+                    <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">X</button></td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6">
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="addRow()">+ Add Row</button>
+                </td>
+                <td class="amount" id="totalGross">0.00</td>
+                <td class="amount" id="totalTax">0.00</td>
+                <td class="amount fw-bold" id="totalNet">0.00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="8" class="amount">Discount</td>
+                <td class="amount" id="totalDiscount">0.00</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <button type="submit" name="button" value="save" class="btn btn-secondary">Save Draft</button>
+    <button type="submit" name="button" value="post" class="btn btn-success"
+            onclick="return confirm('After posting, this purchase cannot be changed. Continue?')">Save &amp; Post</button>
+    <a asp-action="Index" class="btn btn-link">Back</a>
+</form>
+
+@section Scripts {
+    <script src="~/js/purchase.js" asp-append-version="true"></script>
+}

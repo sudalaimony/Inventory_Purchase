@@ -1,0 +1,44 @@
+@model List<Product>
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h4>Products</h4>
+<a asp-action="Create" class="btn btn-primary mb-3">Add Product</a>
+
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Code</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Tax</th>
+            <th class="amount">Cost Price</th>
+            <th class="amount">Selling Price</th>
+            <th>Expiry</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr class="@(p.IsActive ? "" : "text-muted")">
+                <td>@p.ProductCode</td>
+                <td>@p.ProductName</td>
+                <td>@p.CategoryName</td>
+                <td>@(p.TaxName ?? "No Tax")</td>
+                <td class="amount">@p.CostPrice.ToString("0.00")</td>
+                <td class="amount">@p.SellingPrice.ToString("0.00")</td>
+                <td>@(p.HasExpiry ? "Yes" : "No")</td>
+                <td>@(p.IsActive ? "Active" : "Inactive")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@p.ProductId" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <form asp-action="Delete" asp-route-id="@p.ProductId" method="post" class="d-inline" onsubmit="return confirm('Delete this product?')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

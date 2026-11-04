@@ -1,0 +1,98 @@
+@model PurchaseHeader
+@{
+    ViewData["Title"] = "Purchase Details";
+}
+
+<h4>
+    Purchase #@Model.PurchaseId
+    @if (Model.IsPosted)
+    {
+        <span class="badge bg-success">Posted</span>
+    }
+    else
+    {
+        <span class="badge bg-warning text-dark">Draft</span>
+    }
+</h4>
+
+<table class="table table-sm" style="max-width:600px">
+    <tr><th>Supplier</th><td>@Model.SupplierName</td></tr>
+    <tr><th>Invoice No</th><td>@Model.InvoiceNo</td></tr>
+    <tr><th>Invoice Date</th><td>@Model.InvoiceDate?.ToString("dd-MM-yyyy")</td></tr>
+    @if (Model.IsPosted)
+    {
+        <tr><th>Posted On</th><td>@Model.PostedOn?.ToString("dd-MM-yyyy hh:mm tt")</td></tr>
+    }
+</table>
+
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Product</th>
+            <th>Lot No</th>
+            <th>Expiry</th>
+            <th class="amount">Qty</th>
+            <th class="amount">Rate</th>
+            <th class="amount">Amount</th>
+            <th class="amount">Disc %</th>
+            <th class="amount">Discount</th>
+            <th class="amount">Taxable</th>
+            <th>Tax</th>
+            <th class="amount">Tax Amt</th>
+            <th class="amount">Net</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model.Details)
+        {
+            <tr>
+                <td>@d.ProductName</td>
+                <td>@d.LotNo</td>
+                <td>@d.ExpiryDate?.ToString("dd-MM-yyyy")</td>
+                <td class="amount">@d.Quantity.ToString("0.##")</td>
+                <td class="amount">@d.Rate.ToString("0.00")</td>
+                <td class="amount">@d.GrossAmount.ToString("0.00")</td>
+                <td class="amount">@d.DiscountPercent.ToString("0.##")</td>
+                <td class="amount">@d.DiscountAmount.ToString("0.00")</td>
+                <td class="amount">@d.TaxableAmount.ToString("0.00")</td>
+                <td>
+                    @if (d.TaxName != null)
+                    {
+                        @d.TaxName
+                        <small class="text-muted">
+                            (@d.TaxRate%@(d.TaxType == "Compound" ? " + " + d.AdditionalRate + "%" : ""))
+                        </small>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+                <td class="amount">@d.TaxAmount.ToString("0.00")</td>
+                <td class="amount">@d.NetAmount.ToString("0.00")</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr><th colspan="11" class="amount">Gross Amount</th><td class="amount">@Model.GrossAmount.ToString("0.00")</td></tr>
+        <tr><th colspan="11" class="amount">Discount</th><td class="amount">@Model.DiscountAmount.ToString("0.00")</td></tr>
+        <tr><th colspan="11" class="amount">Tax</th><td class="amount">@Model.TaxAmount.ToString("0.00")</td></tr>
+        <tr><th colspan="11" class="amount">Net Amount</th><td class="amount fw-bold">@Model.NetAmount.ToString("0.00")</td></tr>
+    </tfoot>
+</table>
+
+@if (!Model.IsPosted)
+{
+    <a asp-action="Edit" asp-route-id="@Model.PurchaseId" class="btn btn-primary">Edit</a>
+
+    <form asp-action="Post" asp-route-id="@Model.PurchaseId" method="post" class="d-inline"
+          onsubmit="return confirm('After posting, this purchase cannot be changed. Continue?')">
+        <button type="submit" class="btn btn-success">Post</button>
+    </form>
+
+    <form asp-action="Delete" asp-route-id="@Model.PurchaseId" method="post" class="d-inline"
+          onsubmit="return confirm('Delete this draft?')">
+        <button type="submit" class="btn btn-outline-danger">Delete</button>
+    </form>
+}
+<a asp-action="Index" class="btn btn-link">Back</a>

@@ -1,0 +1,33 @@
+# Build output - created again on every build
+bin/
+obj/
+
+# Visual Studio local settings and cache
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# VS Code / Rider settings
+.vscode/
+.idea/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Publish output
+publish/
+*.pubxml.user
+
+# Local secrets - keep passwords out of git
+appsettings.Local.json
+secrets.json
+
+# Local tool settings
+.claude/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

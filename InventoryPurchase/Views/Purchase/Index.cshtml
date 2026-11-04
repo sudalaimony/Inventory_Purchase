@@ -1,0 +1,50 @@
+@model List<PurchaseHeader>
+@{
+    ViewData["Title"] = "Purchases";
+}
+
+<h4>Purchases</h4>
+<a asp-action="Create" class="btn btn-primary mb-3">New Purchase</a>
+
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Supplier</th>
+            <th>Invoice No</th>
+            <th>Invoice Date</th>
+            <th class="amount">Net Amount</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.PurchaseId</td>
+                <td>@p.SupplierName</td>
+                <td>@p.InvoiceNo</td>
+                <td>@p.InvoiceDate?.ToString("dd-MM-yyyy")</td>
+                <td class="amount">@p.NetAmount.ToString("0.00")</td>
+                <td>
+                    @if (p.IsPosted)
+                    {
+                        <span class="badge bg-success">Posted</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">Draft</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@p.PurchaseId" class="btn btn-sm btn-outline-secondary">View</a>
+                    @if (!p.IsPosted)
+                    {
+                        <a asp-action="Edit" asp-route-id="@p.PurchaseId" class="btn btn-sm btn-outline-primary">Edit</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

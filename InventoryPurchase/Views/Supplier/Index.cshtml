@@ -1,0 +1,36 @@
+@model List<Supplier>
+@{
+    ViewData["Title"] = "Suppliers";
+}
+
+<h4>Suppliers</h4>
+<a asp-action="Create" class="btn btn-primary mb-3">Add Supplier</a>
+
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.SupplierName</td>
+                <td>@s.Phone</td>
+                <td>@s.Address</td>
+                <td>@(s.IsActive ? "Active" : "Inactive")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@s.SupplierId" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <form asp-action="Delete" asp-route-id="@s.SupplierId" method="post" class="d-inline" onsubmit="return confirm('Delete this supplier?')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,43 @@
+@model List<Tax>
+@{
+    ViewData["Title"] = "Taxes";
+}
+
+<h4>Taxes</h4>
+<a asp-action="Create" class="btn btn-primary mb-3">Add Tax</a>
+
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Tax Name</th>
+            <th>Type</th>
+            <th class="amount">Rate %</th>
+            <th class="amount">Additional %</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>@t.TaxName</td>
+                <td>@t.TaxType</td>
+                <td class="amount">@t.TaxRate</td>
+                <td class="amount">@t.AdditionalRate</td>
+                <td>@(t.IsActive ? "Active" : "Inactive")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@t.TaxId" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <form asp-action="Delete" asp-route-id="@t.TaxId" method="post" class="d-inline" onsubmit="return confirm('Delete this tax?')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p class="text-muted">
+    Single tax: Tax = Taxable x Rate%.<br />
+    Compound tax: Tax1 = Taxable x Rate%, Tax2 = (Taxable + Tax1) x Additional%.
+</p>

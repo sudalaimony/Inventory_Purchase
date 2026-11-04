@@ -1,0 +1,42 @@
+﻿@model Dashboard
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h4>Dashboard</h4>
+
+<div class="row">
+    <div class="col-md-2 col-6 mb-3">
+        <div class="card"><div class="card-body">
+            <div class="text-muted">Products</div>
+            <h3>@Model.Products</h3>
+        </div></div>
+    </div>
+    <div class="col-md-2 col-6 mb-3">
+        <div class="card"><div class="card-body">
+            <div class="text-muted">Suppliers</div>
+            <h3>@Model.Suppliers</h3>
+        </div></div>
+    </div>
+    <div class="col-md-2 col-6 mb-3">
+        <div class="card"><div class="card-body">
+            <div class="text-muted">Draft Purchases</div>
+            <h3>@Model.Drafts</h3>
+        </div></div>
+    </div>
+    <div class="col-md-2 col-6 mb-3">
+        <div class="card"><div class="card-body">
+            <div class="text-muted">Posted Purchases</div>
+            <h3>@Model.Posted</h3>
+        </div></div>
+    </div>
+    <div class="col-md-2 col-6 mb-3">
+        <div class="card"><div class="card-body">
+            <div class="text-muted">Expired Lots</div>
+            <h3 class="text-danger">@Model.ExpiredLots</h3>
+        </div></div>
+    </div>
+</div>
+
+<a class="btn btn-primary" asp-controller="Purchase" asp-action="Create">New Purchase</a>
+<a class="btn btn-outline-secondary" asp-controller="Stock" asp-action="Index">View Stock</a>

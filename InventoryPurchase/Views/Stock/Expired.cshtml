@@ -1,0 +1,34 @@
+@model List<Stock>
+@{
+    ViewData["Title"] = "Expired Stock";
+}
+
+<h4>Expired Lots</h4>
+<p class="text-muted">These lots are not counted in available stock. <a asp-action="Index">Back to stock</a></p>
+
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Product</th>
+            <th>Lot No</th>
+            <th>Expiry</th>
+            <th class="amount">Qty</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr class="text-danger">
+                <td>@s.ProductName</td>
+                <td>@s.LotNo</td>
+                <td>@s.ExpiryDate?.ToString("dd-MM-yyyy")</td>
+                <td class="amount">@s.Quantity.ToString("0.##")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Count == 0)
+{
+    <p>No expired lots.</p>
+}

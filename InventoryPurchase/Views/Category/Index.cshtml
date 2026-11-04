@@ -1,0 +1,41 @@
+@model Category
+@{
+    ViewData["Title"] = "Categories";
+    var list = (List<Category>)ViewBag.List;
+}
+
+<h4>Categories</h4>
+
+<form asp-action="Create" method="post" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input asp-for="CategoryName" class="form-control" placeholder="New category name" />
+        <span asp-validation-for="CategoryName" class="text-danger"></span>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+</form>
+
+<table class="table table-bordered table-sm" style="max-width:600px">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Category</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in list)
+        {
+            <tr>
+                <td>@c.CategoryId</td>
+                <td>@c.CategoryName</td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@c.CategoryId" method="post" onsubmit="return confirm('Delete this category?')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

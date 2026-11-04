@@ -1,0 +1,55 @@
+@model List<Stock>
+@{
+    ViewData["Title"] = "Stock";
+}
+
+<h4>Available Stock</h4>
+<p class="text-muted">
+    Expired lots are not shown here. Lots are listed in FIFO order (earliest expiry first) - issue stock from the top row first.
+    <a asp-action="Expired">View expired lots</a>
+</p>
+
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Product</th>
+            <th>Lot No</th>
+            <th>Expiry</th>
+            <th>Received On</th>
+            <th class="amount">Rate</th>
+            <th class="amount">Qty</th>
+            <th>FIFO</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int lastProduct = 0;
+        }
+        @foreach (var s in Model)
+        {
+            if (s.ProductId != lastProduct)
+            {
+                lastProduct = s.ProductId;
+                <tr class="table-secondary">
+                    <td colspan="5"><b>@s.ProductName</b></td>
+                    <td class="amount"><b>@Model.Where(x => x.ProductId == s.ProductId).Sum(x => x.Quantity).ToString("0.##")</b></td>
+                    <td></td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td>@s.LotNo</td>
+                <td>@(s.ExpiryDate?.ToString("dd-MM-yyyy") ?? "-")</td>
+                <td>@s.ReceivedOn.ToString("dd-MM-yyyy")</td>
+                <td class="amount">@s.PurchaseRate.ToString("0.00")</td>
+                <td class="amount">@s.Quantity.ToString("0.##")</td>
+                <td>@s.FifoOrder</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Count == 0)
+{
+    <p>No stock available.</p>
+}
